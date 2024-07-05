@@ -1,0 +1,6 @@
+@TasChatAPI_HostAddress = http://localhost:5086
+
+GET {{TasChatAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
