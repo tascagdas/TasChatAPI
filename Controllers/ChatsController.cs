@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using TasChatAPI.Context;
 using TasChatAPI.DTO_s;
 using TasChatAPI.Entities;
+using TasChatAPI.Hubs;
 
 namespace TasChatAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ChatsController(ApplicationDbContext context) : ControllerBase
+    public class ChatsController(ApplicationDbContext context, IHubContext<ChatHub> chatHubContext) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetUserChats(Guid fromUserId, Guid toUserId, CancellationToken cancellationToken)
@@ -33,6 +35,10 @@ namespace TasChatAPI.Controllers
             };
             await context.AddAsync(chat, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
+
+            var connectionId = ChatHub.Users.First(x => x.Value == chat.ToUserId).Key;
+            await chatHubContext.Clients.Client(connectionId).SendAsync("Messages", chat);
+            
             return Ok();
         }
     }
