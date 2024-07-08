@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TasChatAPI.Context;
+using TasChatAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
     ));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -25,6 +28,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<ChatHub>("/chat-hub");
 
 
 app.Run();
