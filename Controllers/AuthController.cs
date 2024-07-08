@@ -30,5 +30,19 @@ namespace TasChatAPI.Controllers
             await context.SaveChangesAsync(cancellationToken);
             return NoContent();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Login( string name, CancellationToken cancellationToken)
+        {
+            User? user = await context.Users.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
+            if (user is null)
+            {
+                return BadRequest(new { Message = "Oturum açmaya çalışılan kullanıcı bulunamamıştır." });
+            }
+
+            user.Status = "online";
+            await context.SaveChangesAsync(cancellationToken);
+            return Ok(user);
+        }
     }
 }
