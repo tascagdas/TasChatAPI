@@ -9,13 +9,14 @@ namespace TasChatAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthController(ApplicationDbContext context) : ControllerBase
+    public class AuthController(
+        ApplicationDbContext context) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterDto request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Register([FromForm]RegisterDto request, CancellationToken cancellationToken)
         {
-            bool isNameUniq = await context.Users.AnyAsync(user => user.Name == request.Name, cancellationToken: cancellationToken);
-            if (!isNameUniq)
+            bool isNameExist = await context.Users.AnyAsync(user => user.UserName == request.UserName, cancellationToken: cancellationToken);
+            if (isNameExist)
             {
                 return BadRequest(new {Message = "Bu kullanıcı adı kullanılmakta."});
             }
@@ -23,18 +24,18 @@ namespace TasChatAPI.Controllers
             string userImage = FileService.FileSaveToServer(request.File, "wwwroot/avatars");
             User user = new User()
             {
-                Name = request.Name,
+                UserName = request.UserName,
                 UserImage = userImage
             };
             await context.AddAsync(user, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
-            return NoContent();
+            return Ok(user);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Login( string name, CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> Login( string userName, CancellationToken cancellationToken)
         {
-            User? user = await context.Users.FirstOrDefaultAsync(u => u.Name == name, cancellationToken);
+            User? user = await context.Users.FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
             if (user is null)
             {
                 return BadRequest(new { Message = "Oturum açmaya çalışılan kullanıcı bulunamamıştır." });
