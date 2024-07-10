@@ -13,6 +13,13 @@ namespace TasChatAPI.Controllers
     public class ChatsController(ApplicationDbContext context, IHubContext<ChatHub> chatHubContext) : ControllerBase
     {
         [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            List<User> users = await context.Users.OrderBy(u => u.UserName).ToListAsync();
+            return Ok(users);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> GetUserChats(Guid fromUserId, Guid toUserId, CancellationToken cancellationToken)
         {
             List<Chat> chats = await context.Chats.Where(
