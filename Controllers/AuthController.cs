@@ -21,7 +21,7 @@ namespace TasChatAPI.Controllers
                 return BadRequest(new {Message = "Bu kullanıcı adı kullanılmakta."});
             }
 
-            string userImage = FileService.FileSaveToServer(request.File, "wwwroot/avatars");
+            string userImage = FileService.FileSaveToServer(request.File, "wwwroot/avatars/");
             User user = new User()
             {
                 UserName = request.UserName,
