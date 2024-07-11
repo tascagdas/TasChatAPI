@@ -25,7 +25,8 @@ namespace TasChatAPI.Controllers
             User user = new User()
             {
                 UserName = request.UserName,
-                UserImage = userImage
+                UserImage = userImage,
+                Status = "offline"
             };
             await context.AddAsync(user, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
