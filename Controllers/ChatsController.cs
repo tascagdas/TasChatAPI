@@ -46,7 +46,7 @@ namespace TasChatAPI.Controllers
             var connectionId = ChatHub.Users.First(x => x.Value == chat.ToUserId).Key;
             await chatHubContext.Clients.Client(connectionId).SendAsync("Messages", chat);
             
-            return Ok();
+            return Ok(chat);
         }
     }
 }

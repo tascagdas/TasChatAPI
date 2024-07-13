@@ -22,7 +22,8 @@ public class ChatHub(ApplicationDbContext dbContext) : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        Users.TryGetValue(Context.ConnectionId, out var userId); 
+        Users.TryGetValue(Context.ConnectionId, out var userId);
+        Users.Remove(Context.ConnectionId);
         User? user = await dbContext.Users.FindAsync(userId);
             if (user is not null)
             {
